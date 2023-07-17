@@ -28,21 +28,7 @@ struct ContentView: View {
         NavigationStack {
             List {
                 ForEach(users) { user in
-                    HStack {
-                        Image(user.name)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
-                            .overlay {
-                                Circle()
-                                    .stroke(lineWidth: 2)
-                                    .foregroundColor(.secondary)
-                            }
-                            .shadow(radius: 4, x:4, y:4)
-                        
-                        Text("\(user.name)")
-                    }
+                    userRowView(user: user)
                 }
             }
             .navigationTitle("Users")
@@ -50,6 +36,34 @@ struct ContentView: View {
                 addButton
             }
         }
+    }
+    
+    func userRowView(user: User) -> some View {
+        HStack {
+            profileImage(user: user)
+            userName(user: user)
+        }
+    }
+    
+    func userName(user: User) -> some View {
+        Text("\(user.name)")
+            .font(.title)
+            .padding(.leading)
+            .bold()
+    }
+    
+    func profileImage(user: User) -> some View {
+        Image(user.name)
+            .resizable()
+            .scaledToFill()
+            .frame(width: 100, height: 100)
+            .clipShape(Circle())
+            .overlay {
+                Circle()
+                    .stroke(lineWidth: 2)
+                    .foregroundColor(.secondary)
+            }
+            .shadow(radius: 4, x:4, y:4)
     }
     
     var addButton: some View {
