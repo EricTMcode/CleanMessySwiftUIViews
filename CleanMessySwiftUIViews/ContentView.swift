@@ -23,18 +23,66 @@ struct User: Identifiable {
 
 struct ContentView: View {
     @State private var users: [User] = [User.examples.randomElement()!]
+    @State private var isAnimating = false
     
     var body: some View {
-        NavigationStack {
-            List {
-                ForEach(users) { user in
-                    userRowView(user: user)
+        ZStack {
+            NavigationStack {
+                List {
+                    ForEach(users) { user in
+                        userRowView(user: user)
+                    }
+                    .onDelete { users.remove(atOffsets: $0) }
+                }
+                .navigationTitle("Users")
+                .toolbar {
+                    addButton
                 }
             }
-            .navigationTitle("Users")
-            .toolbar {
-                addButton
+            if users.isEmpty {
+                userInstructions
             }
+        }
+    }
+}
+
+extension ContentView {
+    var userInstructions: some View {
+        
+        var userInstructionText: some View {
+            VStack {
+                Text("There no users")
+                Text("Please click the \"+\" button to add new user")
+            }
+            .foregroundColor(.secondary)
+        }
+        
+        var animatedArrow: some View {
+            VStack {
+                HStack {
+                    Spacer()
+                    Image("diagonal-arrow")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 100)
+                        .offset(x: -40, y: 20)
+                        .opacity(isAnimating ? 1.0 : 0.5)
+                        .scaleEffect(isAnimating ? 1.0 : 0.5)
+                        .animation(.linear(duration: 1.0).repeatForever(), value: isAnimating)
+                        .onAppear {
+                            isAnimating = true
+                        }
+                        .onDisappear {
+                            isAnimating = false
+                        }
+                }
+                Spacer()
+            }
+        }
+        
+        return ZStack {
+            userInstructionText
+            animatedArrow
         }
     }
     
@@ -75,7 +123,6 @@ struct ContentView: View {
         }
     }
 }
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
